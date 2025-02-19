@@ -1,0 +1,59 @@
+{
+  "BWL": {
+    "boss_names": [
+      "Nefarian",
+      "Firemaw",
+      "Flamegor",
+      "Ebonroc",
+      "Broodlord Lashlayer",
+      "Vaelastrasz",
+      "Razorgore",
+      "Chromaggus"
+    ]
+  },
+  "MC": {
+    "boss_names": [
+      "Majordomo Executus",
+      "Ragnaros",
+      "Lufiron",
+      "Magmadar",
+      "Garr",
+      "Baron Geddon",
+      "Gehennas",
+      "Shazzrah",
+      "Golemagg"
+    ]
+  },
+  "AQ": {
+    "boss_names": [
+      "The Prophet Skeram",
+      "Battleguard Sartura",
+      "Bug Trio",
+      "Fankriss the Unyielding",
+      "Princess Huhuran",
+      "Ouro",
+      "Viscidus",
+      "Twin Emperors",
+      "C'Thun"
+    ]
+  },
+  "Naxx": {
+    "boss_names": [
+      "Anub'Rekhan",
+      "Grand Widow Faerlina",
+      "Maexxna",
+      "Noth the Plaguebringer",
+      "Heigan the Unclean",
+      "Loatheb",
+      "Patchwerk",
+      "Grobbulusaaaaaaaaaaa",
+      "Gluth",
+      "Thaddius",
+      "Instructor Razuvious",
+      "Gothik the Harvester",
+      "The Four Horsemen",
+      "Sapphiron",
+      "Kel'Thuzad"
+    ]
+  }
+}

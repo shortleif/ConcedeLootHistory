@@ -1,0 +1,501 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Arial', sans-serif; /* Changed font to Arial */
+  color: var(--bs-light);
+  background-color: var(--accent-dark);
+  background-image: url('img/orgrimmar.webp');
+  background-repeat: no-repeat;
+  background-size: cover; /* Cover the entire area */
+  background-attachment: fixed; /* Fixed background */
+  background-position: center;
+  min-height: 100vh; /* Ensure the body covers the full viewport height */
+  overflow-y: scroll;
+}
+
+/* New color variables */
+:root {
+  --accent-color: #fb4a4a;
+  --accent-dark: #f83636;
+  --table-stripe: #2f2f2f;
+}
+
+h1 {
+  font-size: 2.5rem;
+  font-weight: bold;
+  padding-bottom: 2%;
+  color: var(--bs-dark);
+}
+
+h2 {
+  margin-top: 0.5rem;
+  color: var(--bs-light); /* Use accent color for headings */
+}
+
+.headspace {
+  padding-top: 3rem;
+}
+
+h4 {
+  background-color: var(--accent-dark);
+  padding: 1rem;
+}
+
+p {
+  font-size: 1.4rem;
+  margin: 1% 0 3%;
+}
+
+#search-input {
+  background-color: var(--bs-light);
+  color: var(--bs-dark);
+  font-size: 1.2rem;
+}
+
+#search-button {
+  background-color: var(--accent-dark);
+  color: var(--bs-light);
+  font-size: 1.2rem;
+}
+
+#search-results > table {
+  border: 2px solid var(--accent-dark); /* Sets a solid border on all sides */
+  border-width: 1px 0 1px 0; /* Adjusts the width of each side: top, right, bottom, left */
+  margin: 2rem 0 2rem 1rem;
+  font-size: 1.2rem;
+  background-color: transparent;
+}
+
+#search-results tr {
+  padding: 2rem 0 2rem 1rem;
+}
+
+#search-results td {
+  border-top: 1px solid var(--accent-dark); /* Sets a solid border on all sides */
+  padding: 0.5rem 0;
+  width: 35%;
+}
+
+#search-results td:first-child {
+  width: 20%;
+}
+
+#search-results td:nth-child(2) {
+  width: 50%;
+}
+
+.clear-button {
+  color: var(--bs-light);
+  float: right;
+  font-size: 1.2rem;
+}
+
+.clear-button:visited {
+  color: var(--bs-light);
+}
+
+.table > :not(caption) > * > * {
+  background-color: transparent;
+  padding: 0 10px 0 0;
+}
+
+.accordion h3:nth-child(3) {
+  padding-top: 40px;
+}
+
+#accordion-latest,
+#accordion-total,
+#accordion-WB,
+#accordion-MC,
+#accordion-BWL,
+#accordion-AQ {
+  padding-bottom: 1%;
+}
+
+.character-name {
+  font-weight: bold;
+  display: inline-block; /* Keep the span inline but allow for margins */
+  margin-bottom: 5px; /* Add a small margin below the character name */
+}
+.container {
+  margin: 0 auto 0 auto;
+  width: 70%;
+}
+#table_container {
+  background-color: var(--bs-dark);
+  padding: 3% 3% 8% 3%;
+}
+
+.accordion .collapse:not(.show) {
+  display: none;
+}
+
+.accordion .card {
+  background-color: var(--bs-gray-500);
+  border: none;
+}
+
+.accordion-button:not(.collapsed)::after {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23212529'%3e%3cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e");
+  margin-right: 2%;
+}
+
+.accordion-button::after {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23ffffff'%3e%3cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e");
+  margin-right: 2%;
+}
+
+.accordion-header {
+  background-color: var(--accent-dark); /* Even darker grey for headers */
+  border-bottom: 4px solid var(--accent-dark) !important; /* Use accent color for border */
+}
+
+.accordion-button {
+  text-decoration: none;
+  color: var(--bs-light);
+  font-size: 1.5rem;
+  background-color: var(--bs-dark);
+  border: none;
+  box-shadow: none;
+  padding: 1%;
+}
+.card-body p {
+  font-size: 1.1rem;
+}
+
+.card-body {
+  overflow-x: auto;
+}
+
+.accordion-button:not(.collapsed) {
+  background-color: var(--bs-grey-900);
+  color: var(--bs-light);
+  box-shadow: none;
+}
+
+.accordion .card-body {
+  background-color: var(--bs-dark);
+  padding: 20px;
+}
+
+.accordion .card-body tr td {
+  padding-top: 0.4rem;
+}
+
+.accordion .card-body tr:first-child {
+  border-bottom: 1px solid var(--accent-dark);
+  padding-bottom: 10px;
+}
+
+.accordion .card-body tr td,
+th {
+  width: 32.5%;
+  font-size: 1.2rem;
+}
+
+.latest td,
+.latest th {
+  color: var(--bs-light);
+}
+
+.total td,
+.total th {
+  color: var(--bs-light);
+}
+
+.item-search tr:nth-child(even),
+.player-search tr:nth-child(even),
+.latest tr:nth-child(even),
+.total tr:nth-child(even) {
+  background-color: var(--table-stripe); /* Use the new stripe color */
+}
+
+.latest a {
+  color: inherit; /* Inherit color from parent */
+  text-decoration: none; /* Remove underline */
+  font-weight: normal; /* Remove bold */
+}
+.latest tr:first-child {
+  border-bottom: 1px solid var(--accent-dark); /* To position the pseudo-element */
+}
+
+.latest td,
+.total td {
+  font-size: 1.2rem;
+  color: var(--bs-light);
+}
+
+.total td {
+  position: relative;
+}
+
+.tooltip {
+  position: absolute;
+  font-size: 1.2rem;
+  display: none;
+  width: 80%;
+  background-color: var(--bs-dark);
+  color: var(--bs-light);
+  padding: 5px;
+  border: 1px solid var(--accent-dark);
+  top: 0; /* Position it at the top of the cell */
+  left: 0; /* Position it at the left of the cell */
+}
+
+::-webkit-scrollbar {
+  width: 1rem; /* Set the width of the scrollbar */
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bs-dark); /* Set the track color */
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--accent-dark); /* Set the thumb color */
+  border-radius: 5px; /* Round the corners of the thumb */
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-color); /* Change the thumb color on hover */
+}
+
+@media (width <= 1250px) {
+  body {
+    font-family: 'Arial', sans-serif; /* Changed font to Arial */
+    color: var(--bs-light);
+    background-color: var(--bs-dark);
+    background-image: none;
+  }
+
+  /* New color variables */
+  :root {
+    --accent-color: #fb4a4a;
+    --accent-dark: #f83636;
+    --table-stripe: #212529;
+  }
+
+  h1 {
+    font-size: 1.5rem;
+    font-weight: bold;
+    padding-bottom: 2%;
+    color: var(--bs-light);
+  }
+
+  h2 {
+    font-size: 1.1rem;
+    margin-top: 15px;
+    color: var(--bs-light); /* Use accent color for headings */
+  }
+
+  h3 {
+    font-size: 0.8rem;
+    font-weight: bold;
+  }
+
+  h4 {
+    background-color: var(--accent-dark);
+    font-size: 1rem;
+    padding: 0.5rem;
+  }
+
+  h4:visited {
+    color: var(--bs-light);
+  }
+
+  p {
+    font-size: 0.8rem;
+    margin-top: 1%;
+    padding-bottom: 2%;
+  }
+
+  #search-input {
+    font-size: 0.8rem;
+  }
+
+  #search-button {
+    font-size: 0.8rem;
+  }
+
+  #search-results > table {
+    border-width: 1px 0 1px 0; /* Adjusts the width of each side: top, right, bottom, left */
+    margin: 2rem 0;
+    font-size: 0.8rem;
+    background-color: transparent;
+  }
+
+  #search-results tr {
+    padding: 2rem 0;
+  }
+
+  #search-results td {
+    padding: 0.5rem 1rem 0.5rem 0;
+    width: 32.5%;
+  }
+
+  #search-results tr {
+    padding: 2rem 0 2rem 1rem;
+  }
+
+  #search-results td:first-child {
+    width: 20%;
+  }
+
+  #search-results td:nth-child(2) {
+    width: 50%;
+  }
+
+  .clear-button {
+    float: right;
+    font-size: 0.8rem;
+  }
+
+  .accordion h3:nth-child(3) {
+    padding-top: 40px;
+  }
+
+  #accordion-latest,
+  #accordion-total,
+  #accordion-Other,
+  #accordion-WB,
+  #accordion-MC,
+  #accordion-BWL,
+  #accordion-AQ {
+    padding-bottom: 2%;
+  }
+
+  #accordion-Other,
+  #accordion-WB,
+  #accordion-MC,
+  #accordion-BWL,
+  #accordion-AQ td {
+    font-size: 0.7rem;
+    background-color: transparent;
+  }
+
+  .character-name {
+    font-weight: bold;
+    display: inline-block; /* Keep the span inline but allow for margins */
+    margin-bottom: 5px; /* Add a small margin below the character name */
+  }
+  .container {
+    margin: 30px auto 0 auto;
+    width: 95%;
+  }
+  #table_container {
+    background-color: var(--bs-dark);
+    padding: 0;
+  }
+  .accordion .card {
+    background-color: var(--bs-gray-500);
+    border: none;
+  }
+
+  .accordion-button::after {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23ffffff'%3e%3cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e");
+  }
+
+  .accordion-header {
+    background-color: var(--accent-dark); /* Even darker grey for headers */
+    border-bottom: 1px solid var(--accent-dark) !important; /* Use accent color for border */
+  }
+
+  .accordion-button {
+    text-decoration: none;
+    color: var(--bs-light);
+    font-size: 0.9rem;
+    background-color: var(--bs-dark);
+    border: none;
+    box-shadow: none;
+    padding: 1%;
+  }
+  .card-body p {
+    font-size: 1.1rem;
+  }
+
+  .card-body {
+    overflow-x: auto;
+  }
+
+  .accordion-button:not(.collapsed) {
+    background-color: var(--bs-grey-900);
+    color: var(--bs-light);
+    box-shadow: none;
+  }
+
+  .accordion .card-body {
+    background-color: var(--bs-dark);
+    padding: 10px 5px 0 5px;
+  }
+
+  .accordion .card-body tr:first-child {
+    border-bottom: 1px solid var(--accent-dark);
+    margin-bottom: 10px;
+  }
+
+  .accordion .card-body tr td,
+  th {
+    width: 32.5%;
+    font-size: 0.8rem;
+  }
+
+  .latest a {
+    color: inherit; /* Inherit color from parent */
+    text-decoration: none; /* Remove underline */
+    font-weight: normal; /* Remove bold */
+  }
+  .latest tr:first-child {
+    border-bottom: 1px solid var(--accent-dark); /* To position the pseudo-element */
+  }
+
+  #accordion-latest table {
+    max-width: 100%;
+    overflow-x: auto;
+  }
+
+  .latest th,
+  .total th {
+    font-size: 0.8rem;
+    padding: 1% 0 1% 0;
+  }
+
+  .latest td,
+  .total td {
+    font-size: 0.7rem;
+    padding: 1% 10px 1% 0%;
+  }
+
+  .total td {
+    position: relative;
+  }
+
+  .tooltip {
+    font-size: 0.7rem;
+    position: absolute;
+    display: none;
+    width: 100%;
+    background-color: var(--bs-dark);
+    color: var(--bs-light);
+    padding: 5px;
+    border: 1px solid var(--accent-dark);
+    top: 0; /* Position it at the top of the cell */
+    left: 0; /* Position it at the left of the cell */
+  }
+
+  /* Hide scrollbars */
+  ::-webkit-scrollbar {
+    width: 0; /* Remove scrollbar space */
+    background: transparent; /* Optional: make the track transparent */
+  }
+
+  ::-webkit-scrollbar-track {
+    background: var(--bs-dark); /* Set the track color */
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: transparent; /* Make thumb invisible */
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--accent-color); /* Change the thumb color on hover */
+  }
+}
