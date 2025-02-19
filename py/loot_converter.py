@@ -3,12 +3,16 @@ import unicodedata
 from blizz_item_fetch import get_item_data, get_access_token
 from dotenv import load_dotenv
 import os
-import datetime
 
 load_dotenv()
 
 CLIENT_ID = os.getenv("CLIENT_ID")
 SECRET = os.getenv("SECRET")
+
+# Base directory
+base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+roster_file = os.path.join(base_dir, 'data', 'roster.txt')
+
 
 replacements = {
     "Harkclickone": "Harkshock",
@@ -17,7 +21,7 @@ replacements = {
     "Jwhistler": "Jwhistle",
 }
 
-def convert_txt_to_JSON(exported_data, existing_raid_data=None):
+def convert_txt_to_JSON(roster_file, exported_data, existing_raid_data=None):
     raid_data = existing_raid_data if existing_raid_data else {}
 
     with open(exported_data, 'r', encoding='utf-8') as f:
@@ -35,7 +39,7 @@ def convert_txt_to_JSON(exported_data, existing_raid_data=None):
 
     for raid in raids:
         try:
-            with open(f'{raid}_loot_table.json', 'r', encoding='utf-8') as f:
+            with open(os.path.join(base_dir, 'data/lookup_tables', f'{raid}_loot_table.json'), 'r', encoding='utf-8') as f:
                 try:
                     item_cache[raid] = json.load(f)
                 except json.JSONDecodeError:
@@ -54,7 +58,7 @@ def convert_txt_to_JSON(exported_data, existing_raid_data=None):
     except FileNotFoundError:
         trash_items = {}
 
-    with open('roster.txt', 'r', encoding='utf-8') as f:
+    with open(roster_file, 'r', encoding='utf-8') as f:
         roster = [line.strip().replace(",", "") for line in f]
         print(roster)
 
@@ -139,6 +143,7 @@ def get_item_name_and_raid(trash_items, item_id, item_cache, access_token, raids
             print(f"Trash item found: {item_name}")
 
     if current_raid is None and item_name is None:
+        print("############", type(item_id), "#########")
         # Item not found in any cache or trash_items, fetch from API
         item_data = get_item_data(access_token, item_id)
         try:
@@ -150,12 +155,6 @@ def get_item_name_and_raid(trash_items, item_id, item_cache, access_token, raids
                 if item_name.endswith("Qiraji Resonating Crystal"):
                     current_raid = "AQ"
                     print(f"Wildcard match: {item_name} assigned to AQ")
-                elif item_name.startswith("Qiraji"):
-                    current_raid = "AQ"
-                    print(f"Wildcard match: {item_name} assigned to AQ")
-                elif item_name.startswith("Desecrated"):
-                    current_raid = "Naxx"
-                    print(f"Wildcard match: {item_name} assigned to Naxx")
                 else:
                     valid_raids = raids
                     while True:
@@ -197,26 +196,3 @@ def get_item_name_and_raid(trash_items, item_id, item_cache, access_token, raids
         print(f"Using item ID {item_id} as item name")
 
     return current_raid, item_name
-
-def get_latest_date_from_export(exported_data_file):
-    try:
-        with open(exported_data_file, 'r', encoding='utf-8') as f:
-            dates = []
-            for line in f:
-                # Assuming the date is in the format YYYY-MM-DD and is the first element in each line
-                date_str = line.strip().split(",")[0]
-                try:
-                    date = datetime.datetime.strptime(date_str, "%Y-%m-%d")
-                    dates.append(date)
-                except ValueError:
-                    continue  # Skip lines that don't have a valid date
-            if dates:
-                return max(dates).strftime("%Y-%m-%d")
-            else:
-                return None
-    except FileNotFoundError:
-        print(f"Error: Exported data file not found at {exported_data_file}")
-        return None
-    except Exception as e:
-        print(f"Error reading exported data file: {e}")
-        return None

@@ -130,7 +130,7 @@ function createLink(href, textContent) {
   return link;
 }
 
-fetch('../raid_data.json')
+fetch('data/raid_data.json')
   .then((response) => response.json())
   .then((raidData) => {
     const lootDataDiv = document.getElementById('loot-data');
@@ -279,7 +279,7 @@ fetch('../raid_data.json')
     console.error('Error fetching or processing data:', error);
   });
 
-fetch('../softres_data.json')
+fetch('data/softres_data.json')
   .then((response) => response.json())
   .then((srData) => {
     const {

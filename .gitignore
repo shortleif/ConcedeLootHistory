@@ -7,7 +7,7 @@ __pycache__/
 *.env
 
 #ignore debug-files
-settings.json
+settings.json            
 
 # Ignore virtual environment folders
 venv/
