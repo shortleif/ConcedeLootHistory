@@ -1,10 +1,10 @@
 body {
   margin: 0;
   padding: 0;
-  font-family: 'Arial', sans-serif; /* Changed font to Arial */
+  font-family: "Arial", sans-serif; /* Changed font to Arial */
   color: var(--bs-light);
   background-color: var(--accent-dark);
-  background-image: url('img/orgrimmar.webp');
+  background-image: url("img/naxx.webp");
   background-repeat: no-repeat;
   background-size: cover; /* Cover the entire area */
   background-attachment: fixed; /* Fixed background */
@@ -15,16 +15,17 @@ body {
 
 /* New color variables */
 :root {
-  --accent-color: #fb4a4a;
-  --accent-dark: #f83636;
+  --accent-color: #4b60b2;
+  --accent-dark: #2f448a;
   --table-stripe: #2f2f2f;
 }
 
 h1 {
   font-size: 2.5rem;
   font-weight: bold;
+  margin-top: 2%;
   padding-bottom: 2%;
-  color: var(--bs-dark);
+  color: var(--bs-light);
 }
 
 h2 {
@@ -261,7 +262,7 @@ th {
 
 @media (width <= 1250px) {
   body {
-    font-family: 'Arial', sans-serif; /* Changed font to Arial */
+    font-family: "Arial", sans-serif; /* Changed font to Arial */
     color: var(--bs-light);
     background-color: var(--bs-dark);
     background-image: none;

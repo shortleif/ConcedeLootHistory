@@ -24,8 +24,9 @@ env/
 node_modules/
 dist/
 build/
+old script/
 
-#Ignored data storeage
+#Ignored files in data folder
 softres_import.csv
 loot_import.txt
 raid_data.json

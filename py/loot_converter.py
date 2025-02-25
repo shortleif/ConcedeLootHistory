@@ -3,16 +3,12 @@ import unicodedata
 from blizz_item_fetch import get_item_data, get_access_token
 from dotenv import load_dotenv
 import os
+from datetime import datetime
 
 load_dotenv()
 
 CLIENT_ID = os.getenv("CLIENT_ID")
 SECRET = os.getenv("SECRET")
-
-# Base directory
-base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-roster_file = os.path.join(base_dir, 'data', 'roster.txt')
-
 
 replacements = {
     "Harkclickone": "Harkshock",
@@ -20,6 +16,9 @@ replacements = {
     "Sumsushi": "Minto",
     "Jwhistler": "Jwhistle",
 }
+
+base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+roster_file = os.path.join(base_dir, 'data', 'roster.txt')
 
 def convert_txt_to_JSON(roster_file, exported_data, existing_raid_data=None):
     raid_data = existing_raid_data if existing_raid_data else {}
@@ -38,8 +37,9 @@ def convert_txt_to_JSON(roster_file, exported_data, existing_raid_data=None):
     item_cache = {}
 
     for raid in raids:
+        loot_table_path = os.path.join(base_dir, 'data', 'lookup_tables', f'{raid}_loot_table.json')
         try:
-            with open(os.path.join(base_dir, 'data/lookup_tables', f'{raid}_loot_table.json'), 'r', encoding='utf-8') as f:
+            with open(loot_table_path, 'r', encoding='utf-8') as f:
                 try:
                     item_cache[raid] = json.load(f)
                 except json.JSONDecodeError:
@@ -48,8 +48,9 @@ def convert_txt_to_JSON(roster_file, exported_data, existing_raid_data=None):
         except FileNotFoundError:
             item_cache[raid] = {}
 
+    trash_item_cache_path = os.path.join(base_dir, 'data', 'lookup_tables', 'trash_item_cache.json')
     try:
-        with open('trash_item_cache.json', 'r', encoding='utf-8') as f:
+        with open(trash_item_cache_path, 'r', encoding='utf-8') as f:
             try:
                 trash_items = json.load(f)
             except json.JSONDecodeError:
@@ -62,8 +63,17 @@ def convert_txt_to_JSON(roster_file, exported_data, existing_raid_data=None):
         roster = [line.strip().replace(",", "") for line in f]
         print(roster)
 
+    # Calculate the max date in the current import
+    max_date = None
     for line in lines[1:]:
-        # print(f"{round(num_items / len(lines) * 100, 2)}%")
+        date_time, _, _, _, _ = line.strip().split(',')
+        current_date = datetime.strptime(date_time, "%Y-%m-%d")
+        if max_date is None or current_date > max_date:
+            max_date = current_date
+
+    max_date_str = max_date.strftime("%Y-%m-%d") if max_date else None
+
+    for line in lines[1:]:
         num_items += 1
         date_time, character, item_id, offspec, unique_id = line.strip().split(',')
 
@@ -112,10 +122,13 @@ def convert_txt_to_JSON(roster_file, exported_data, existing_raid_data=None):
             if event["id"] == unique_id:
                 event["dateTime"] = event["dateTime"] + [date_time]
                 event["timesLooted"] += 1
+                if "raidWeek" not in event:
+                    event["raidWeek"] = []
+                event["raidWeek"].append(max_date_str)
                 found = True
                 break
         if not found:
-            loot_events.append({"dateTime": [date_time], "timesLooted": 1, "id": unique_id})
+            loot_events.append({"dateTime": [date_time], "timesLooted": 1, "id": unique_id, "raidWeek": [max_date_str]})
 
     # Remove "_disenchanted" to "Disenchanted"
     if "_disenchanted" in raid_data:
@@ -135,11 +148,10 @@ def get_item_name_and_raid(trash_items, item_id, item_cache, access_token, raids
             # Check for item in all valid raids
             current_raid = raid
             item_name = item_cache[current_raid][item_id]
-            # print(f"Found in cache {raid, item_name}")
         elif item_id in trash_items:
             # Check for item in trash_items e.g. ZG
             current_raid = "Trash"
-            item_name = trash_items[item_id]  # Geta the item name from trash_items
+            item_name = trash_items[item_id]
             print(f"Trash item found: {item_name}")
 
     if current_raid is None and item_name is None:
@@ -169,17 +181,17 @@ def get_item_name_and_raid(trash_items, item_id, item_cache, access_token, raids
                 item_cache[current_raid][item_id] = item_name
 
                 # Update the corresponding loot table JSON file
+                loot_table_path = os.path.join(base_dir, 'data', 'lookup_tables', f"{current_raid}_loot_table.json")
                 try:
-                    with open(f"{current_raid}_loot_table.json", "r", encoding="utf-8") as f:
+                    with open(loot_table_path, "r", encoding="utf-8") as f:
                         loot_table_data = json.load(f)
                 except FileNotFoundError:
                     loot_table_data = {}
 
                 loot_table_data[item_id] = item_name
 
-                with open(f"{current_raid}_loot_table.json", "w", encoding="utf-8") as f:
+                with open(loot_table_path, "w", encoding="utf-8") as f:
                     json.dump(loot_table_data, f, indent=4, ensure_ascii=False)
-
 
             # Print "Item not found in cache" if item_name is still None
             if item_name is None:
