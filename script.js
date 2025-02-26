@@ -1,7 +1,7 @@
-fetch('data/raid_data.json')
+fetch("data/raid_data.json")
   .then((response) => response.json())
   .then((raidData) => {
-    const lootDataDiv = document.getElementById('loot-data');
+    const lootDataDiv = document.getElementById("loot-data");
 
     // Get all unique raid names
     const raids = new Set();
@@ -51,8 +51,8 @@ fetch('data/raid_data.json')
         );
         raidCardBody.appendChild(characterAccordionDiv);
 
-        processLoot(raidData[character], 'Mainspec', characterCardBody, raid); // Pass raid to processLoot
-        processLoot(raidData[character], 'Offspec', characterCardBody, raid); // Pass raid to processLoot
+        processLoot(raidData[character], "Mainspec", characterCardBody, raid); // Pass raid to processLoot
+        processLoot(raidData[character], "Offspec", characterCardBody, raid); // Pass raid to processLoot
       });
     });
 
@@ -71,21 +71,22 @@ fetch('data/raid_data.json')
 
     const { accordionDiv: latestAccordionDiv, cardBody: latestCardBody } =
       createAccordion(
-        'accordion-latest',
-        'heading-latest',
-        `Loot From Latest Raid (${latestDate})`,
-        'accordion-latest'
+        "accordion-latest",
+        "heading-latest",
+        `Loot From Latest Reset`,
+        // `Loot From Latest Raid (${latestDate})`,
+        "accordion-latest"
       );
     lootDataDiv.prepend(latestAccordionDiv);
 
     // Start Latest Table //
 
-    const latestLootTable = createTable(['table', 'table-dark', 'latest']);
-    const tableBody = document.createElement('tbody');
+    const latestLootTable = createTable(["table", "table-dark", "latest"]);
+    const tableBody = document.createElement("tbody");
     latestLootTable.appendChild(tableBody);
     const latestLootHeaderRow = createTableRow([
-      createElement('th', 'Name'),
-      createElement('th', 'Items'),
+      createElement("th", "Name"),
+      createElement("th", "Items"),
     ]);
     tableBody.appendChild(latestLootHeaderRow);
 
@@ -141,11 +142,11 @@ fetch('data/raid_data.json')
     for (const character in sortedCharacterLoot) {
       const items = sortedCharacterLoot[character].map((item) => {
         const itemCell = createElement(
-          'td',
+          "td",
           null,
           createLink(
             item.itemLink,
-            `${item.itemName} ${item.wasSr ? '(SR)' : ''}`
+            `${item.itemName} ${item.wasSr ? "(SR)" : ""}`
           )
         );
         return itemCell;
@@ -153,10 +154,10 @@ fetch('data/raid_data.json')
 
       // Add empty cells to fill the row
       while (items.length < maxItems) {
-        items.push(createElement('td', ''));
+        items.push(createElement("td", ""));
       }
 
-      const row = createTableRow([createElement('td', character), ...items]);
+      const row = createTableRow([createElement("td", character), ...items]);
       tableBody.appendChild(row);
     }
 
@@ -169,29 +170,36 @@ fetch('data/raid_data.json')
       cardBody: totalCardBody,
       collapseDiv: totalCollapseDiv,
     } = createAccordion(
-      'accordion-total',
-      'heading-total',
-      'Total Loot This Phase',
-      'accordion-total'
+      "accordion-total",
+      "heading-total",
+      "Total Loot This Phase",
+      "accordion-total"
     );
 
-    const totalLootTable = createTable(['table', 'table-dark', 'total']);
-    const totalTableBody = document.createElement('tbody');
+    const totalLootTable = createTable(["table", "table-dark", "total"]);
+    const totalTableBody = document.createElement("tbody");
     totalLootTable.appendChild(totalTableBody);
 
     const totalLootHeaderRow = createTableRow([
-      createElement('th', 'Name'),
-      createElement('th', 'Mainspec'),
-      createElement('th', 'Offspec'),
+      createElement("th", "Name"),
+      createElement("th", "Mainspec"),
+      createElement("th", "Set Token Mainspec"), // New column
+      createElement("th", "Offspec"),
+      createElement("th", "Set Token Offspec"), // New column
     ]);
     totalTableBody.appendChild(totalLootHeaderRow);
 
     const totalCharacterLoot = {};
-    const cutoffDate = new Date('2024-12-07'); // Set the cutoff date
+    const cutoffDate = new Date("2024-12-07"); // Set the cutoff date
 
     for (const character in raidData) {
       const characterData = raidData[character];
-      totalCharacterLoot[character] = { mainspec: 0, offspec: 0 };
+      totalCharacterLoot[character] = {
+        mainspec: 0,
+        desecratedMainspec: 0,
+        offspec: 0,
+        desecratedOffspec: 0,
+      };
 
       // Mainspec loot
       if (characterData.Mainspec) {
@@ -203,11 +211,18 @@ fetch('data/raid_data.json')
             const lootDate = new Date(event.dateTime[0]);
             if (lootDate >= cutoffDate) {
               totalCharacterLoot[character].mainspec += event.timesLooted;
+
+              // Count Desecrated items separately
+              if (item.itemName.startsWith("Desecrated")) {
+                totalCharacterLoot[character].desecratedMainspec +=
+                  event.timesLooted;
+              }
             }
           });
         }
       }
-      // Offspec loot (similar logic)
+
+      // Offspec loot
       if (characterData.Offspec) {
         for (const itemId in characterData.Offspec) {
           const item = characterData.Offspec[itemId];
@@ -217,6 +232,12 @@ fetch('data/raid_data.json')
             const lootDate = new Date(event.dateTime[0]);
             if (lootDate >= cutoffDate) {
               totalCharacterLoot[character].offspec += event.timesLooted;
+
+              // Count Desecrated items separately
+              if (item.itemName.startsWith("Desecrated")) {
+                totalCharacterLoot[character].desecratedOffspec +=
+                  event.timesLooted;
+              }
             }
           });
         }
@@ -225,43 +246,78 @@ fetch('data/raid_data.json')
 
     const sortedTotalCharacters = Object.keys(totalCharacterLoot).sort();
     sortedTotalCharacters.forEach((character) => {
-      const characterRow = createTableRow([createElement('td', character)]);
+      const characterRow = createTableRow([createElement("td", character)]);
 
-      const mainspecCell = createElement('td');
+      // Mainspec column
+      const mainspecCell = createElement("td");
       const mainspecNumberSpan = createElement(
-        'span',
+        "span",
         totalCharacterLoot[character].mainspec
       );
-      mainspecNumberSpan.classList.add('number-cell');
-      mainspecNumberSpan.style.pointerEvents = 'none';
+      mainspecNumberSpan.classList.add("number-cell");
+      mainspecNumberSpan.style.pointerEvents = "none";
       mainspecCell.appendChild(mainspecNumberSpan);
-      //  Add the data-tooltip attribute to mainspecCell HERE
+
       const mainspecItems = [];
       for (const itemId in raidData[character].Mainspec) {
-        // Iterate only over items for the current character
         const itemName = raidData[character].Mainspec[itemId].itemName;
         mainspecItems.push(itemName);
       }
-      mainspecCell.dataset.tooltip = mainspecItems.join('\n');
-      characterRow.appendChild(mainspecCell); // Append mainspecCell to characterRow
+      mainspecCell.dataset.tooltip = mainspecItems.join("\n");
+      characterRow.appendChild(mainspecCell);
 
-      const offspecCell = createElement('td');
+      // Desecrated Mainspec column
+      const desecratedMainspecCell = createElement("td");
+      const desecratedMainspecNumberSpan = createElement(
+        "span",
+        totalCharacterLoot[character].desecratedMainspec
+      );
+      desecratedMainspecNumberSpan.classList.add("number-cell");
+      desecratedMainspecNumberSpan.style.pointerEvents = "none";
+      desecratedMainspecCell.appendChild(desecratedMainspecNumberSpan);
+
+      // Add tooltip for desecrated mainspec items
+      const desecratedMainspecItems = mainspecItems.filter((item) =>
+        item.startsWith("Desecrated")
+      );
+      desecratedMainspecCell.dataset.tooltip =
+        desecratedMainspecItems.join("\n");
+      characterRow.appendChild(desecratedMainspecCell);
+
+      // Offspec column
+      const offspecCell = createElement("td");
       const offspecNumberSpan = createElement(
-        'span',
+        "span",
         totalCharacterLoot[character].offspec
       );
-      offspecNumberSpan.classList.add('number-cell');
-      offspecNumberSpan.style.pointerEvents = 'none';
+      offspecNumberSpan.classList.add("number-cell");
+      offspecNumberSpan.style.pointerEvents = "none";
       offspecCell.appendChild(offspecNumberSpan);
-      //  Add the data-tooltip attribute to offspecCell HERE
+
       const offspecItems = [];
       for (const itemId in raidData[character].Offspec) {
-        // Iterate only over items for the current character
         const itemName = raidData[character].Offspec[itemId].itemName;
         offspecItems.push(itemName);
       }
-      offspecCell.dataset.tooltip = offspecItems.join('\n');
-      characterRow.appendChild(offspecCell); // Append offspecCell to characterRow
+      offspecCell.dataset.tooltip = offspecItems.join("\n");
+      characterRow.appendChild(offspecCell);
+
+      // Desecrated Offspec column
+      const desecratedOffspecCell = createElement("td");
+      const desecratedOffspecNumberSpan = createElement(
+        "span",
+        totalCharacterLoot[character].desecratedOffspec
+      );
+      desecratedOffspecNumberSpan.classList.add("number-cell");
+      desecratedOffspecNumberSpan.style.pointerEvents = "none";
+      desecratedOffspecCell.appendChild(desecratedOffspecNumberSpan);
+
+      // Add tooltip for desecrated offspec items
+      const desecratedOffspecItems = offspecItems.filter((item) =>
+        item.startsWith("Desecrated")
+      );
+      desecratedOffspecCell.dataset.tooltip = desecratedOffspecItems.join("\n");
+      characterRow.appendChild(desecratedOffspecCell);
 
       totalTableBody.appendChild(characterRow);
     });
@@ -276,10 +332,10 @@ fetch('data/raid_data.json')
     lootDataDiv.insertBefore(totalAccordionDiv, latestAccordionDiv.nextSibling);
   })
   .catch((error) => {
-    console.error('Error fetching or processing data:', error);
+    console.error("Error fetching or processing data:", error);
   });
 
-fetch('data/softres_data.json')
+fetch("data/softres_data.json")
   .then((response) => response.json())
   .then((srData) => {
     const {
@@ -287,22 +343,22 @@ fetch('data/softres_data.json')
       cardBody: srtopCardBody,
       collapseDiv: srtopCollapseDiv,
     } = createAccordion(
-      'accordion-softres',
-      'heading-softres',
-      'SR Toplist This Phase',
-      'accordion-softres'
+      "accordion-softres",
+      "heading-softres",
+      "SR Toplist This Phase",
+      "accordion-softres"
     );
 
     // Create the table element
-    const srtopTable = createTable(['table', 'table-dark', 'sr-top', 'latest']);
-    const srtopTableBody = document.createElement('tbody');
+    const srtopTable = createTable(["table", "table-dark", "sr-top", "latest"]);
+    const srtopTableBody = document.createElement("tbody");
     srtopTable.appendChild(srtopTableBody);
 
     // Create the table header row
     const srtopHeaderRow = createTableRow([
-      createElement('th', 'Item'),
-      createElement('th', 'Boss'),
-      createElement('th', 'Times Reserved'),
+      createElement("th", "Item"),
+      createElement("th", "Boss"),
+      createElement("th", "Times Reserved"),
     ]);
     srtopTableBody.appendChild(srtopHeaderRow);
 
@@ -316,7 +372,7 @@ fetch('data/softres_data.json')
         for (const player in srData[raidInstance][boss]) {
           for (const item in srData[raidInstance][boss][player]) {
             const itemData = srData[raidInstance][boss][player][item];
-            const numReserved = itemData.item_info['Number reserved'];
+            const numReserved = itemData.item_info["Number reserved"];
             const itemId = itemData.item_info.ItemId;
 
             if (!aggregatedData[item]) {
@@ -355,12 +411,12 @@ fetch('data/softres_data.json')
         const itemId = bossData[boss].itemId;
         const row = createTableRow([
           createElement(
-            'td',
+            "td",
             null,
             createLink(`https://www.wowhead.com/classic/item=${itemId}`, item)
           ),
-          createElement('td', boss),
-          createElement('td', numReserved.toString()),
+          createElement("td", boss),
+          createElement("td", numReserved.toString()),
         ]);
         srtopTableBody.appendChild(row);
       }
@@ -370,50 +426,50 @@ fetch('data/softres_data.json')
     srtopCardBody.appendChild(srtopTable);
 
     // Append the accordion to the softres div
-    const softresDiv = document.getElementById('softres');
+    const softresDiv = document.getElementById("softres");
     softresDiv.appendChild(srtopAccordionDiv);
 
     // Create the h2 element for the "Softreserves" heading
-    const srHeading = document.createElement('h2');
-    srHeading.textContent = 'Soft-reserves';
+    const srHeading = document.createElement("h2");
+    srHeading.textContent = "Soft-reserves";
 
     // Append the heading and the accordion to the desired container
     softresDiv.prepend(srHeading); // Append the heading first
   })
   .catch((error) => {
-    console.error('Error fetching or processing data:', error);
+    console.error("Error fetching or processing data:", error);
   });
 
 function createAccordion(accordionId, headingId, headingText, parent) {
-  const accordionDiv = document.createElement('div');
-  accordionDiv.classList.add('accordion');
+  const accordionDiv = document.createElement("div");
+  accordionDiv.classList.add("accordion");
   accordionDiv.id = accordionId;
 
-  const cardHeader = document.createElement('div');
-  cardHeader.classList.add('accordion-header', 'custom-card-header');
+  const cardHeader = document.createElement("div");
+  cardHeader.classList.add("accordion-header", "custom-card-header");
   cardHeader.id = headingId;
 
-  const accordionButton = document.createElement('div');
-  accordionButton.classList.add('accordion-button', 'collapsed');
-  accordionButton.type = 'button';
-  accordionButton.dataset.bsToggle = 'collapse';
+  const accordionButton = document.createElement("div");
+  accordionButton.classList.add("accordion-button", "collapsed");
+  accordionButton.type = "button";
+  accordionButton.dataset.bsToggle = "collapse";
   accordionButton.dataset.bsTarget = `#collapse-${accordionId}`;
-  accordionButton.setAttribute('aria-expanded', 'false');
-  accordionButton.setAttribute('aria-controls', `#collapse-${accordionId}`);
+  accordionButton.setAttribute("aria-expanded", "false");
+  accordionButton.setAttribute("aria-controls", `#collapse-${accordionId}`);
   accordionButton.textContent = headingText;
 
   cardHeader.appendChild(accordionButton);
   accordionDiv.appendChild(cardHeader);
 
   // Create the content for the accordion
-  const collapseDiv = document.createElement('div');
-  collapseDiv.classList.add('collapse');
+  const collapseDiv = document.createElement("div");
+  collapseDiv.classList.add("collapse");
   collapseDiv.id = `collapse-${accordionId}`;
-  collapseDiv.setAttribute('aria-labelledby', headingId);
-  collapseDiv.setAttribute('data-parent', `#${parent}`);
+  collapseDiv.setAttribute("aria-labelledby", headingId);
+  collapseDiv.setAttribute("data-parent", `#${parent}`);
 
-  const cardBody = document.createElement('div');
-  cardBody.classList.add('card-body');
+  const cardBody = document.createElement("div");
+  cardBody.classList.add("card-body");
 
   collapseDiv.appendChild(cardBody);
   accordionDiv.appendChild(collapseDiv);
@@ -422,16 +478,16 @@ function createAccordion(accordionId, headingId, headingText, parent) {
 }
 
 function processLoot(characterData, specType, cardBody, raid) {
-  const heading = document.createElement('h3');
+  const heading = document.createElement("h3");
   heading.textContent = `${specType} Loot`;
   cardBody.appendChild(heading);
 
-  const table = createTable(['table', 'table-dark']);
+  const table = createTable(["table", "table-dark"]);
   const headerRow = createTableRow([
-    createElement('th', 'Item Name'),
-    createElement('th', 'Looted On'),
-    createElement('th', '# Looted'),
-    ...(specType === 'Mainspec' ? [createElement('th', 'Soft-reserved?')] : []), // Add new column header only for Mainspec
+    createElement("th", "Item Name"),
+    createElement("th", "Looted On"),
+    createElement("th", "# Looted"),
+    ...(specType === "Mainspec" ? [createElement("th", "Soft-reserved?")] : []), // Add new column header only for Mainspec
   ]);
   table.appendChild(headerRow);
 
@@ -447,7 +503,7 @@ function processLoot(characterData, specType, cardBody, raid) {
       );
       const itemRow = createTableRow([
         createElement(
-          'td',
+          "td",
           null,
           createLink(
             `https://www.wowhead.com/classic/item=${itemId}`,
@@ -455,23 +511,23 @@ function processLoot(characterData, specType, cardBody, raid) {
           )
         ),
         createElement(
-          'td',
+          "td",
           item.lootEvents
             .map((event) => event.dateTime)
             .flat()
-            .join(', ')
+            .join(", ")
         ),
         createElement(
-          'td',
+          "td",
           item.lootEvents
             .map((event) => event.timesLooted)
             .reduce((sum, current) => sum + current, 0)
         ),
-        ...(specType === 'Mainspec'
+        ...(specType === "Mainspec"
           ? [
               createElement(
-                'td',
-                item.lootEvents.some((event) => event.wasSr) ? 'Yes' : 'No'
+                "td",
+                item.lootEvents.some((event) => event.wasSr) ? "Yes" : "No"
               ),
             ]
           : []), // Add new column data only for Mainspec
@@ -484,13 +540,13 @@ function processLoot(characterData, specType, cardBody, raid) {
 }
 
 function createTable(tableClasses) {
-  const table = document.createElement('table');
+  const table = document.createElement("table");
   table.classList.add(...tableClasses); // Add 'total' class here
   return table;
 }
 
 function createTableRow(cells) {
-  const row = document.createElement('tr');
+  const row = document.createElement("tr");
   cells.forEach((cell) => row.appendChild(cell));
   return row;
 }
@@ -507,20 +563,20 @@ function createElement(tag, textContent, child) {
 }
 
 function createLink(href, textContent) {
-  const link = document.createElement('a');
+  const link = document.createElement("a");
   link.href = href;
-  link.target = '_blank';
+  link.target = "_blank";
   link.textContent = textContent;
   return link;
 }
 
 function makeTableSortable(table) {
-  const headers = table.querySelectorAll('th');
+  const headers = table.querySelectorAll("th");
   let currentSortColumn = null;
   let sortAscending = true;
 
   headers.forEach((header) => {
-    header.addEventListener('click', () => {
+    header.addEventListener("click", () => {
       const columnIndex = Array.from(header.parentNode.children).indexOf(
         header
       );
@@ -533,7 +589,7 @@ function makeTableSortable(table) {
       }
 
       const rows = Array.from(
-        table.querySelectorAll('tbody tr:not(:first-child)')
+        table.querySelectorAll("tbody tr:not(:first-child)")
       );
       rows.sort((a, b) => {
         const aValue = a.children[columnIndex].textContent.toLowerCase();
@@ -553,9 +609,9 @@ function makeTableSortable(table) {
       });
 
       // Remove existing rows and append sorted rows
-      const tbody = table.querySelector('tbody');
-      const headerRow = tbody.querySelector('tr:first-child'); // Save the header row
-      tbody.innerHTML = '';
+      const tbody = table.querySelector("tbody");
+      const headerRow = tbody.querySelector("tr:first-child"); // Save the header row
+      tbody.innerHTML = "";
       tbody.appendChild(headerRow); // Re-append the header row
       rows.forEach((row) => tbody.appendChild(row));
     });

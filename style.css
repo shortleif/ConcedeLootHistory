@@ -1,3 +1,9 @@
+/* New color variables */
+:root {
+  --accent-color: #4b60b2;
+  --accent-dark: #2f448a;
+  --table-stripe: #2f2f2f;
+}
 body {
   margin: 0;
   padding: 0;
@@ -11,13 +17,6 @@ body {
   background-position: center;
   min-height: 100vh; /* Ensure the body covers the full viewport height */
   overflow-y: scroll;
-}
-
-/* New color variables */
-:root {
-  --accent-color: #4b60b2;
-  --accent-dark: #2f448a;
-  --table-stripe: #2f2f2f;
 }
 
 h1 {
@@ -190,7 +189,7 @@ p {
 
 .accordion .card-body tr td,
 th {
-  width: 32.5%;
+  width: 20%;
   font-size: 1.2rem;
 }
 
@@ -216,8 +215,24 @@ th {
   text-decoration: none; /* Remove underline */
   font-weight: normal; /* Remove bold */
 }
-.latest tr:first-child {
-  border-bottom: 1px solid var(--accent-dark); /* To position the pseudo-element */
+/* .latest tr:first-child {
+  border-bottom: 1px solid var(--accent-dark); 
+} */
+
+/* Add right borders to specific columns in the total table */
+.total td:nth-child(1),
+.total th:nth-child(1),
+.total td:nth-child(3),
+.total th:nth-child(3) {
+  border-right: 2px solid var(--accent-dark);
+}
+
+/* Add extra left padding to columns after a border */
+.total td:nth-child(2),
+.total th:nth-child(2),
+.total td:nth-child(4),
+.total th:nth-child(4) {
+  padding-left: 15px;
 }
 
 .latest td,
@@ -266,13 +281,6 @@ th {
     color: var(--bs-light);
     background-color: var(--bs-dark);
     background-image: none;
-  }
-
-  /* New color variables */
-  :root {
-    --accent-color: #fb4a4a;
-    --accent-dark: #f83636;
-    --table-stripe: #212529;
   }
 
   h1 {
