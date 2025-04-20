@@ -191,10 +191,10 @@ def update_was_sr(raid_data, softres_data):
                                         if any(date in raid_week for date in softres_dates):
                                             was_sr = True
                                             break
-                                else:
-                                    print(f"Item {item_id} not found for character {character} in softres_data under boss {boss}")
-                            else:
-                                print(f"Character {character} not found in softres_data under boss {boss}")
+                            #     else:
+                            #         print(f"Item {item_id} not found for character {character} in softres_data under boss {boss}")
+                            # else:
+                            #     print(f"Character {character} not found in softres_data under boss {boss}")
                             if was_sr:
                                 break
                         if was_sr:

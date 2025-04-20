@@ -33,7 +33,7 @@ def convert_txt_to_JSON(roster_file, exported_data, existing_raid_data=None):
     num_items = 1
     access_token = get_access_token(CLIENT_ID, SECRET)
 
-    raids = ['AQ', 'BWL', 'MC', 'Naxx', "Other", "WB"]
+    raids = ['AQ', 'BWL', 'MC', 'Naxx', "Scarlet", "Other", "WB"]
     item_cache = {}
 
     for raid in raids:
@@ -88,7 +88,7 @@ def convert_txt_to_JSON(roster_file, exported_data, existing_raid_data=None):
         spec = "Offspec" if offspec == "1" else "Mainspec"
 
         # Determine the raid and fetch item name
-        current_raid, item_name = get_item_name_and_raid(trash_items, item_id, item_cache, access_token, raids)
+        item_name, current_raid = get_item_name_and_raid(item_id, access_token, trash_items, item_cache)
         print("Item:", item_name, "Current Raid:", current_raid)
 
         if current_raid == "Trash":
@@ -136,75 +136,29 @@ def convert_txt_to_JSON(roster_file, exported_data, existing_raid_data=None):
 
     return raid_data
 
-def get_item_name_and_raid(trash_items, item_id, item_cache, access_token, raids):
-    """
-    Helper function to fetch the item name and determine the raid.
-    """
-    current_raid = None
+def get_item_name_and_raid(item_id, access_token, raid_lookup, item_lookup):
     item_name = None
+    raid_name = None
 
-    for raid in raids:
-        if item_id in item_cache[raid]:
-            # Check for item in all valid raids
-            current_raid = raid
-            item_name = item_cache[current_raid][item_id]
-        elif item_id in trash_items:
-            # Check for item in trash_items e.g. ZG
-            current_raid = "Trash"
-            item_name = trash_items[item_id]
-            print(f"Trash item found: {item_name}")
+    # First check if item exists in our local lookup table
+    if item_id in item_lookup:
+        item_name = item_lookup[item_id]["name"]
+        print(f"{item_name} found in local lookup")
+        raid_name = item_lookup[item_id].get("raid", "Unknown")
+        return item_name, raid_name
 
-    if current_raid is None and item_name is None:
-        print("############", type(item_id), "#########")
-        # Item not found in any cache or trash_items, fetch from API
-        item_data = get_item_data(access_token, item_id)
-        try:
-            if item_data:
-                item_name = item_data["name"]
-                print(f"{item_name} fetched from API")
+    # If not found locally, try the API
+    try:
+        item_data = get_item_data(item_id, access_token)
+        if item_data and "name" in item_data:
+            item_name = item_data["name"]
+            print(f"{item_name} fetched from API")
+            # Rest of the existing raid lookup logic...
+        else:
+            print(f"Failed to fetch item name for item ID {item_id} from API")
+            raise ValueError(f"Could not get item name from API for item ID {item_id}")
+    except Exception as e:
+        print(f"Error fetching item data for item ID {item_id}: {e}")
+        raise
 
-                # Check for the wildcard condition
-                if item_name.endswith("Qiraji Resonating Crystal"):
-                    current_raid = "AQ"
-                    print(f"Wildcard match: {item_name} assigned to AQ")
-                else:
-                    valid_raids = raids
-                    while True:
-                        current_raid = input(f"Enter raid for item {item_id} - {item_name} (options: {', '.join(valid_raids)}): ")
-                        if current_raid in valid_raids:
-                            break
-                        else:
-                            print("Invalid raid. Please enter a valid option.")
-
-                if current_raid not in item_cache:
-                    item_cache[current_raid] = {}
-                item_cache[current_raid][item_id] = item_name
-
-                # Update the corresponding loot table JSON file
-                loot_table_path = os.path.join(base_dir, 'data', 'lookup_tables', f"{current_raid}_loot_table.json")
-                try:
-                    with open(loot_table_path, "r", encoding="utf-8") as f:
-                        loot_table_data = json.load(f)
-                except FileNotFoundError:
-                    loot_table_data = {}
-
-                loot_table_data[item_id] = item_name
-
-                with open(loot_table_path, "w", encoding="utf-8") as f:
-                    json.dump(loot_table_data, f, indent=4, ensure_ascii=False)
-
-            # Print "Item not found in cache" if item_name is still None
-            if item_name is None:
-                print(f"Item not found in cache for item ID {item_id}")
-
-            else:
-                print(f"Failed to fetch item name for item ID {item_id} from API")
-        except Exception as e:
-            print(f"Error fetching item data for item ID {item_id}: {e}")
-
-    # If item_name is still None after trying the API, set it to the item_id
-    if item_name is None:
-        item_name = item_id  # Use item_id as a fallback
-        print(f"Using item ID {item_id} as item name")
-
-    return current_raid, item_name
+    return item_name, raid_name

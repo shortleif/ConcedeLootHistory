@@ -55,5 +55,17 @@
       "Sapphiron",
       "Kel'Thuzad"
     ]
+  },
+  "Scarlet": {
+    "boss_names": [
+      "Balnazzar",
+      "High Commander Beatrix",
+      "Solistrasza",
+      "Mason the Echo",
+      "Alexei the Beastlord",
+      "Reborn Council",
+      "Lillian Voss",
+      "Grand Crusader Caldoran"
+    ]
   }
 }
