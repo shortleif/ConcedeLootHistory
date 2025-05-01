@@ -309,6 +309,9 @@ fetch('data/softres_data.json')
 
     makeTableSortable(srtopTable);
 
+    // Set the cutoff date for phase filtering
+    const cutoffDate = new Date('2025-04-13'); // Same cutoff date as in your loot code
+
     // Aggregate the data by item and boss
     const aggregatedData = {};
 
@@ -317,7 +320,18 @@ fetch('data/softres_data.json')
         for (const player in srData[raidInstance][boss]) {
           for (const item in srData[raidInstance][boss][player]) {
             const itemData = srData[raidInstance][boss][player][item];
-            const numReserved = itemData.item_info['Number reserved'];
+            const raidDates = itemData.raid_dates;
+
+            // Filter the reservation dates based on cutoff
+            const phaseDates = raidDates.filter((dateStr) => {
+              const reserveDate = new Date(dateStr);
+              return reserveDate >= cutoffDate;
+            });
+
+            // Skip this item if no dates in current phase
+            if (phaseDates.length === 0) continue;
+
+            const numReserved = phaseDates.length; // Count only phase-relevant reservations
             const itemId = itemData.item_info.ItemId;
 
             if (!aggregatedData[item]) {
@@ -382,7 +396,7 @@ fetch('data/softres_data.json')
     softresDiv.prepend(srHeading); // Append the heading first
   })
   .catch((error) => {
-    console.error('Error fetching or processing data:', error);
+    console.error('Error fetching or processing softres data:', error);
   });
 
 function createAccordion(accordionId, headingId, headingText, parent) {
