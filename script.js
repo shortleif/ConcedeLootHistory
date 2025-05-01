@@ -188,7 +188,7 @@ fetch('data/raid_data.json')
     totalTableBody.appendChild(totalLootHeaderRow);
 
     const totalCharacterLoot = {};
-    const cutoffDate = new Date('2024-04-13'); // Set the cutoff date
+    const cutoffDate = new Date('2025-04-13'); // Set the cutoff date
 
     for (const character in raidData) {
       const characterData = raidData[character];

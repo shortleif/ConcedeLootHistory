@@ -27,7 +27,7 @@ build/
 old script/
 
 #Ignored files in data folder
-Scarlet_loot_table.json
+Scarlet_loot_table_scrape.json
 Scarlet_loot_table_G.json
 softres_import.csv
 loot_import.txt

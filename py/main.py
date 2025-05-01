@@ -1,7 +1,7 @@
 import json
 import os
 
-from loot_converter import convert_txt_to_JSON
+from loot_converter import convert_txt_to_JSON, update_loot_table
 from softres_converter import decode_gargul_string, update_was_sr
 
 # Base directory
@@ -21,7 +21,7 @@ FTP_USER = os.getenv('FTP_USER')
 FTP_PASSWORD = os.getenv('FTP_PASSWORD')
 
 # Handle the softres data
-softres_data = decode_gargul_string(softres_export, boss_dict, softres_file)
+softres_data = decode_gargul_string(softres_export, boss_dict, softres_file, base_dir)
 
 try:
     with open(softres_file, 'r', encoding='utf-8') as f:
@@ -33,7 +33,7 @@ except FileNotFoundError:
     existing_sr_data = None
 
 # Save the JSON output to a file
-with open(softres_file, 'w', encoding='utf-8') as outfile:  # Use 'w' mode to overwrite
+with open(softres_file, 'w', encoding='utf-8') as outfile:
     json.dump(softres_data, outfile, indent=4, ensure_ascii=False)
 
 # Handle the raid data
@@ -80,4 +80,4 @@ with open(raid_file, 'w', encoding='utf-8') as outfile:  # Use 'w' mode to overw
 #update_raid_data_with_softres(raid_file, softres_file, latest_date)
 
 # from ftp_transfer import upload_file_to_ftp
-# upload_file_to_ftp(filename, FTP_HOST, FTP_USER, FTP_PASSWORD)
+# upload_file_to_ftp(filename, FTP_HOST, FTP_USER, FTP_PASSWORD)Sc

@@ -2,7 +2,7 @@ import csv
 import json
 from datetime import datetime
 
-def decode_gargul_string(softres_export, boss_dict, softres_file=None):
+def decode_gargul_string(softres_export, boss_dict, softres_file=None, base_dir=None):
     """
     Reads a CSV file, extracts data from all columns (excluding 'Note',
     'Discord ID', and 'Plus'), handles duplicate 'Name' entries by adding
@@ -182,12 +182,12 @@ def update_was_sr(raid_data, softres_data):
                     for raid_instance, bosses in softres_data.items():
                         for boss, softres_items in bosses.items():
                             if character in softres_items:
-                                print(f"Character {character} found in softres_data under boss {boss}")
+                                # print(f"Character {character} found in softres_data under boss {boss}")
                                 for softres_item, softres_item_data in softres_items[character].items():
                                     if item_id == softres_item_data['item_info']['ItemId']:
                                         print(f"Item {item_id} found for character {character} in softres_data")
                                         softres_dates = softres_item_data['raid_dates']
-                                        print(f"Comparing raid_week {raid_week} with softres_dates {softres_dates}")
+                                        # print(f"Comparing raid_week {raid_week} with softres_dates {softres_dates}")
                                         if any(date in raid_week for date in softres_dates):
                                             was_sr = True
                                             break
@@ -203,6 +203,7 @@ def update_was_sr(raid_data, softres_data):
                     event['wasSr'] = was_sr
 
                     if not was_sr:
-                        print(f"Warning: {character} not found in soft reserve data or no matching dates for item {item_id}")
+                        pass
+                        # print(f"Warning: {character} not found in soft reserve data or no matching dates for item {item_id}")
 
     return raid_data
